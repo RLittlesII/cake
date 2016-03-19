@@ -6,6 +6,7 @@ using Cake.Common.Build.ContinuaCI;
 using Cake.Common.Build.Jenkins;
 using Cake.Common.Build.MyGet;
 using Cake.Common.Build.TeamCity;
+using Cake.Common.Build.TravisCI;
 
 namespace Cake.Common.Build
 {
@@ -22,6 +23,7 @@ namespace Cake.Common.Build
         private readonly IContinuaCIProvider _continuaCIProvider;
         private readonly IJenkinsProvider _jenkinsProvider;
         private readonly IBitriseProvider _bitriseProvider;
+        private readonly ITravisCIProvider _travisCiProvider;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BuildSystem" /> class.
@@ -33,7 +35,8 @@ namespace Cake.Common.Build
         /// <param name="continuaCIProvider">The Continua CI Provider.</param>
         /// <param name="jenkinsProvider">The Jenkins Provider.</param>
         /// <param name="bitriseProvider">The Bitrise Provider.</param>
-        public BuildSystem(IAppVeyorProvider appVeyorProvider, ITeamCityProvider teamCityProvider, IMyGetProvider myGetProvider, IBambooProvider bambooProvider, IContinuaCIProvider continuaCIProvider, IJenkinsProvider jenkinsProvider, IBitriseProvider bitriseProvider)
+        /// <param name="travisCIProvider">The travis ci provider.</param>
+        public BuildSystem(IAppVeyorProvider appVeyorProvider, ITeamCityProvider teamCityProvider, IMyGetProvider myGetProvider, IBambooProvider bambooProvider, IContinuaCIProvider continuaCIProvider, IJenkinsProvider jenkinsProvider, IBitriseProvider bitriseProvider, ITravisCIProvider travisCIProvider)
         {
             if (appVeyorProvider == null)
             {
@@ -63,6 +66,10 @@ namespace Cake.Common.Build
             {
                 throw new ArgumentNullException("bitriseProvider");
             }
+            if (travisCIProvider == null)
+            {
+                throw new ArgumentNullException("travisCIProvider");
+            }
 
             _appVeyorProvider = appVeyorProvider;
             _teamCityProvider = teamCityProvider;
@@ -71,6 +78,7 @@ namespace Cake.Common.Build
             _continuaCIProvider = continuaCIProvider;
             _jenkinsProvider = jenkinsProvider;
             _bitriseProvider = bitriseProvider;
+            _travisCiProvider = travisCIProvider;
         }
 
         /// <summary>
@@ -336,6 +344,37 @@ namespace Cake.Common.Build
         }
 
         /// <summary>
+        /// Gets a value indicating whether this instance is running on TravisCI.
+        /// </summary>
+        /// <example>
+        /// <code>
+        /// if(BuildSystem.IsRunningOnTravisCI)
+        /// {
+        ///     // Get the build directory.
+        ///     var buildDirectory = BuildSystem.TravisCI.Environment.Build.BuildDirectory;
+        /// }
+        /// </code>
+        /// </example>
+        /// <value>
+        /// <c>true</c> if this instance is running on travis ci; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsRunningOnTravisCI
+        {
+            get { return _travisCiProvider.IsRunningOnTravisCI; }
+        }
+
+        /// <summary>
+        /// Gets the TravisCI provider.
+        /// </summary>
+        /// <value>
+        /// The travis ci.
+        /// </value>
+        public ITravisCIProvider TravisCI
+        {
+            get { return _travisCiProvider; }
+        }
+
+        /// <summary>
         /// Gets a value indicating whether the current build is local build.
         /// </summary>
         /// <example>
@@ -356,7 +395,7 @@ namespace Cake.Common.Build
         /// </value>
         public bool IsLocalBuild
         {
-            get { return !(IsRunningOnAppVeyor || IsRunningOnTeamCity || IsRunningOnMyGet || IsRunningOnBamboo || IsRunningOnContinuaCI || IsRunningOnJenkins || IsRunningOnBitrise); }
+            get { return !(IsRunningOnAppVeyor || IsRunningOnTeamCity || IsRunningOnMyGet || IsRunningOnBamboo || IsRunningOnContinuaCI || IsRunningOnJenkins || IsRunningOnBitrise || IsRunningOnTravisCI); }
         }
     }
 }
