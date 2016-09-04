@@ -19,7 +19,7 @@ namespace Cake.Common.Tools.WiX.Heat
         public IEnumerable<string> Extensions { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether [no logo].
+        /// Gets or sets a value indicating whether to skip printing the logo.
         /// </summary>
         /// <value>
         ///   <c>true</c> if [no logo]; otherwise, <c>false</c>.

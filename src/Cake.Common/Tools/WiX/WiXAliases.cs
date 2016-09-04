@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cake.Common.Tools.WiX.Heat;
+using Cake.Common.Tools.WiX.Insignia;
 using Cake.Core;
 using Cake.Core.Annotations;
 using Cake.Core.Diagnostics;
@@ -318,6 +319,27 @@ namespace Cake.Common.Tools.WiX
 
             var runner = new HeatRunner(context.FileSystem, context.Environment, context.ProcessRunner, context.Tools);
             runner.Run(harvestTarget, outputFile, harvestType, settings ?? new HeatSettings());
+        }
+
+        /// <summary>
+        /// Detach and attach the burn engine from a bundle for signing.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="bundle">The bundle.</param>
+        /// <param name="fileType">Type of the file.</param>
+        /// <param name="settings">The settings.</param>
+        [CakeMethodAlias]
+        [CakeAliasCategory("Insignia")]
+        [CakeNamespaceImport("Cake.Common.Tools.WiX.Insignia")]
+        public static void WiXInsignia(this ICakeContext context, FilePath bundle, WiXInsigniaFileType fileType, InsigniaSettings settings)
+        {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            var runner = new InsigniaRunner(context.FileSystem, context.Environment, context.ProcessRunner, context.Tools);
+            runner.Run(bundle, fileType, settings);
         }
     }
 }
