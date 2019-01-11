@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using Cake.Common.Build.TFBuild.Data;
 using Cake.Core.IO;
 
@@ -191,6 +192,20 @@ namespace Cake.Common.Build.TFBuild
         /// </summary>
         /// <param name="data">The publish test results data</param>
         void PublishTestResults(TFBuildPublishTestResultsData data);
+
+        /// <summary>
+        /// Publishes and uploads tests results.
+        /// </summary>
+        /// <param name="testResultFiles">The test result files.</param>
+        /// <param name="data">The publish test results data</param>
+        void PublishTestResults(IEnumerable<FilePath> testResultFiles, TFBuildPublishTestResultsData data);
+
+        /// <summary>
+        /// Publishes and uploads tests results.
+        /// </summary>
+        /// <param name="testResultFiles">The test result files.</param>
+        /// <param name="action">The configuration action for the test result data.</param>
+        void PublishTestResults(IEnumerable<FilePath> testResultFiles, Action<TFBuildPublishTestResultsData> action);
 
         /// <summary>
         /// Publishes and uploads code coverage results

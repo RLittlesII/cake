@@ -50,7 +50,7 @@ namespace Cake.Common.Build.TFBuild.Data
         /// </summary>
         public bool? PublishRunAttachments { get; set; }
 
-        internal Dictionary<string, string> GetProperties(ICakeEnvironment environment)
+        internal Dictionary<string, string> GetProperties(ICakeEnvironment environment, IEnumerable<FilePath> testResultFilePath = null)
         {
             if (environment == null)
             {
@@ -63,27 +63,44 @@ namespace Cake.Common.Build.TFBuild.Data
             {
                 properties.Add("type", TestRunner.Value.ToString());
             }
+
             if (MergeTestResults.HasValue)
             {
                 properties.Add("mergeResults", MergeTestResults.ToString().ToLowerInvariant());
             }
+
             if (!string.IsNullOrWhiteSpace(Platform))
             {
                 properties.Add("platform", Platform);
             }
+
             if (!string.IsNullOrWhiteSpace(Configuration))
             {
                 properties.Add("config", Configuration);
             }
+
             if (!string.IsNullOrWhiteSpace(TestRunTitle))
             {
                 properties.Add("runTitle", $"'{TestRunTitle}'");
             }
+
             if (PublishRunAttachments.HasValue)
             {
                 properties.Add("publishRunAttachments", PublishRunAttachments.ToString().ToLowerInvariant());
             }
-            if (TestResultsFiles != null && TestResultsFiles.Any())
+
+            if (testResultFilePath != null)
+            {
+                properties.Add("resultFiles",
+                    string.Join(",",
+                        testResultFilePath.Select(filePath =>
+                            filePath
+                                .MakeAbsolute(environment)
+                                .FullPath
+                                .Replace(filePath.Separator, System.IO.Path.DirectorySeparatorChar))));
+            }
+
+            if (TestResultsFiles != null && TestResultsFiles.Any() && testResultFilePath == null)
             {
                 properties.Add("resultFiles",
                     string.Join(",",

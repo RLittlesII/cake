@@ -355,6 +355,36 @@ namespace Cake.Common.Build.TFBuild
         }
 
         /// <summary>
+        /// Publishes and uploads tests results.
+        /// </summary>
+        /// <param name="testResultFiles">The test result files.</param>
+        /// <param name="data">The publish test results data</param>
+        public void PublishTestResults(IEnumerable<FilePath> testResultFiles, TFBuildPublishTestResultsData data)
+        {
+            var properties = data.GetProperties(_environment, testResultFiles);
+            WriteLoggingCommand("results.publish", properties, string.Empty);
+        }
+
+        /// <summary>
+        /// Publishes and uploads tests results.
+        /// </summary>
+        /// <param name="testResultFiles">The test result files.</param>
+        /// <param name="action">The configuration action for the test result data.</param>
+        /// <exception cref="ArgumentNullException">action</exception>
+        public void PublishTestResults(IEnumerable<FilePath> testResultFiles, Action<TFBuildPublishTestResultsData> action)
+        {
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            var data = new TFBuildPublishTestResultsData();
+            action(data);
+
+            PublishTestResults(testResultFiles, data);
+        }
+
+        /// <summary>
         /// Publishes and uploads code coverage results
         /// </summary>
         /// <param name="data">The code coverage data</param>
